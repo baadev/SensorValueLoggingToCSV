@@ -1,6 +1,6 @@
 /*** SensorValueLoggingToCSV Z-Way Home Automation ***************************
 
- Version: 1.0.0
+ Version: 1.0.1
  (c) Z-Wave.Me, 2019
 
  -----------------------------------------------------------------------------
@@ -12,7 +12,7 @@
     Installation:
         1. Place this file into /opt/z-way-server/automation/
         2. Open /opt/z-way-server/automation/main.js and paste 
-           'executeFile("GetSCV.js");' before last brace
+           'executeFile("GetCSV.js");' before last brace
         3. Restart z-way server or reboot device
         
     To download CSV file you should open next link:
