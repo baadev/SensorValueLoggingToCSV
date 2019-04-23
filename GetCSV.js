@@ -25,15 +25,14 @@ ws.allowExternalAccess("GetCSV", controller.auth.ROLE.ANONYMOUS);
 
 global["GetCSV"] = function(url, request) {
         var list = loadObject("__storageContent");
-        var csv = "id,name,timestamp,value\n";
+        var csv = "id,name,room,timestamp,value\n";
         
         list.forEach(function(file) {
             if (file.match(/SensorValueLogging/)) {
                 var sensorData = loadObject(file);
                 var id = sensorData.deviceId;
-                var name = sensorData.deviceName;
                 csv += sensorData.sensorData.map(function(row) {
-                    return id + "," + name + "," + row.time + "," + row.value;
+                    return id + "," + row.deviceName + "," + row.location + "," + row.time + "," + row.value;
                 }).join('\n');
                 csv += "\n";
             }
