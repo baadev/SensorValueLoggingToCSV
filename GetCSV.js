@@ -31,8 +31,10 @@ global["GetCSV"] = function(url, request) {
             if (file.match(/SensorValueLogging/)) {
                 var sensorData = loadObject(file);
                 var id = sensorData.deviceId;
+                var name = sensorData.deviceName;
+                var location = sensorData.location;
                 csv += sensorData.sensorData.map(function(row) {
-                    return id + "," + row.deviceName + "," + row.location + "," + row.time + "," + row.value;
+                    return id + "," + name + "," + location + "," + row.time + "," + row.value;
                 }).join('\n');
                 csv += "\n";
             }
