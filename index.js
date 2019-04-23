@@ -37,11 +37,13 @@ SensorValueLogging.prototype.init = function (config) {
 			if (!storedLog) {
 				storedLog = {
 					deviceId: vDev.id,
-					deviceName: vDev.get("metrics:title"),
 					sensorData: []
 				};
 			}
-			storedLog.sensorData.push({"time": Date.now(), "value": vDev.get("metrics:level")});
+			storedLog.sensorData.push({"deviceName": vDev.get("metrics:title"),
+									   "location": this.controller.locations.filter(function(l) { return vDev.get("location") === l.id; }).map(function(l) { return l.title; })[0], // baa: get room name
+									   "time": Date.now(), // baa
+									   "value": vDev.get("metrics:level")});
 			saveObject("SensorValueLogging_" + vDev.id + "_" + self.id, storedLog);
 			storedLog = null;
 		}
