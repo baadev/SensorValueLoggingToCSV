@@ -34,16 +34,17 @@ SensorValueLogging.prototype.init = function (config) {
 	this.handler = function (vDev) {
 		if (self.config.logTo === "JSONFile") {
 			var storedLog = loadObject("SensorValueLogging_" + vDev.id + "_" + self.id);
+	
 			if (!storedLog) {
 				storedLog = {
-					deviceId: vDev.id,
 					sensorData: []
 				};
 			}
-			storedLog.sensorData.push({"deviceName": vDev.get("metrics:title"),
-									   "location": this.controller.locations.filter(function(l) { return vDev.get("location") === l.id; }).map(function(l) { return l.title; })[0], // baa: get room name
-									   "time": Date.now(), // baa
-									   "value": vDev.get("metrics:level")});
+			storedLog.deviceId = vDev.id;
+			storedLog.deviceName = vDev.get("metrics:title");
+			storedLog.location = this.controller.locations.filter(function(l) { return vDev.get("location") === l.id; }).map(function(l) { return l.title; })[0]; // baa: get room name
+			storedLog.sensorData.push({"time": Date.now(), "value": vDev.get("metrics:level")});
+
 			saveObject("SensorValueLogging_" + vDev.id + "_" + self.id, storedLog);
 			storedLog = null;
 		}
