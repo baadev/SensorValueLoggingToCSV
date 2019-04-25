@@ -24,32 +24,68 @@ ws.revokeExternalAccess("GetCSV");
 ws.allowExternalAccess("GetCSV", controller.auth.ROLE.ANONYMOUS);
 
 global["GetCSV"] = function(url, request) {
+        var content_type = "text/html";
+        var content_disposition = "inline";
+        var result = "SensorValueLogging files empty or doesn't exist";
+
         var list = loadObject("__storageContent");
         var csv = "id,name,room,timestamp,value\n";
-        
-        list.forEach(function(file) {
-            if (file.match(/SensorValueLogging/)) {
-                var sensorData = loadObject(file);
-                var id = sensorData.deviceId;
-                var name = sensorData.deviceName;
-                var location = sensorData.location;
-                csv += sensorData.sensorData.map(function(row) {
-                    return id + "," + name + "," + location + "," + row.time + "," + row.value;
-                }).join('\n');
-                csv += "\n";
-            }
-        });
-        
+
+        if (url == "/clear") {
+            var emptyobj = {};
+            list.forEach(function(file) {
+                if (file.match(/SensorValueLogging/)) {
+                    saveObject(file, emptyobj);
+                }
+            });
+
+            result = "Success clear";
+        } else {
+            list.forEach(function(file) {
+                if (file.match(/SensorValueLogging/)) {
+                    var sensorData = loadObject(file);
+                    
+                    if (!sensorData.hasOwnProperty("deviceId")) { 
+                        return {
+                            status: 200,
+                            headers: {
+                                    "Content-Type": content_type,
+                                    "Content-Disposition": content_disposition,
+                                    "Access-Control-Allow-Origin": "*",
+                                    "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
+                                    "Access-Control-Allow-Headers": "Authorization",
+                                    "Connection": "keep-alive"
+                            },
+                            body: result
+                        }
+                    };
+                    
+
+                    var id = sensorData.deviceId;
+                    var name = sensorData.deviceName;
+                    var location = sensorData.location;
+                    csv += sensorData.sensorData.map(function(row) {
+                        return id + "," + name + "," + location + "," + row.time + "," + row.value;
+                    }).join('\n');
+                    
+                    content_type = "text/csv";
+                    content_disposition = "attachment; filename=" + "sensor.csv";
+                    result = csv += "\n";
+                }
+            });
+        }
+
+
         return {
                 status: 200,
                 headers: {
-                        "Content-Type": "text/csv",
-                        "Content-Disposition": "attachment; filename=" + "sensor.csv",
+                        "Content-Type": content_type,
+                        "Content-Disposition": content_disposition,
                         "Access-Control-Allow-Origin": "*",
                         "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
                         "Access-Control-Allow-Headers": "Authorization",
                         "Connection": "keep-alive"
                 },
-                body: csv
+                body: result
         };
 };
