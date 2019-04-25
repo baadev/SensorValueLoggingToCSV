@@ -31,20 +31,16 @@ global["GetCSV"] = function(url, request) {
         var list = loadObject("__storageContent");
         var csv = "id,name,room,timestamp,value\n";
 
-        if (url == "/clear") {
-            var emptyobj = {};
-            list.forEach(function(file) {
-                if (file.match(/SensorValueLogging/)) {
-                    saveObject(file, emptyobj);
-                }
-            });
-
-            result = "Success clear";
-        } else {
             list.forEach(function(file) {
                 if (file.match(/SensorValueLogging/)) {
                     var sensorData = loadObject(file);
-                    
+
+                    if (url == "/clear") {
+                        saveObject(file, emptyobj);
+
+                        result = "Success clear";
+                    }
+
                     if (!sensorData.hasOwnProperty("deviceId")) { 
                         return {
                             status: 200,
@@ -67,13 +63,13 @@ global["GetCSV"] = function(url, request) {
                     csv += sensorData.sensorData.map(function(row) {
                         return id + "," + name + "," + location + "," + row.time + "," + row.value;
                     }).join('\n');
-                    
+
                     content_type = "text/csv";
                     content_disposition = "attachment; filename=" + "sensor.csv";
                     result = csv += "\n";
                 }
             });
-        }
+        
 
 
         return {
