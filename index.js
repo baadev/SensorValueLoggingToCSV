@@ -34,8 +34,8 @@ SensorValueLogging.prototype.init = function (config) {
 	this.handler = function (vDev) {
 		if (self.config.logTo === "JSONFile") {
 			var storedLog = loadObject("SensorValueLogging_" + vDev.id + "_" + self.id);
-
-			if (!storedLog.hasOwnProperty("deviceId")) {
+			
+			if (storedLog === null || !storedLog.hasOwnProperty("deviceId")) {
 				storedLog = {
 					deviceId: '',
 					deviceName: '',
@@ -43,7 +43,6 @@ SensorValueLogging.prototype.init = function (config) {
 					sensorData: []
 				};
 			}
-
 
 			storedLog.deviceId = vDev.id;
 			storedLog.deviceName = vDev.get("metrics:title");
